@@ -43,6 +43,7 @@ endif
 
 EXIST ?= $(shell test -d "$(SDK_DIR)"; echo $$?)
 ifeq ($(EXIST),1)
+$(info Please use 'CROSS_DIR' parameter to override default directory)
 $(error You must have 'lincon' SDK directory: $(SDK_DIR))
 endif
 

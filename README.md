@@ -37,11 +37,9 @@ Please use 'ilogger -h' to see a complete list of available options.
 * Download LinPAC SDK for Linux from here:
   http://www.abersys.com/support
 
-* Place it at the root directory "/", you can make a symbolic link as follows:
 ```sh
-  $ sudo ln -s /home/username/lincon /lincon
+  $ make CROSS=lincon
 ```
 
-```sh
-  $ make CROSS=linpac
-```
+Additionally, you can use 'CROSS_DIR' parameter to override SDK
+default directory, i.e. '~/lincon' in the above case.
