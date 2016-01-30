@@ -26,27 +26,42 @@ WCFLAGS		= -Wall -W
 CFLAGS		= -g -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 $(WCFLAGS) $(CFLAGS_DBG)
 LDFLAGS		= -g -Wl,-O1
 
-ifeq ($(CROSS),linpac)
+ifneq ($(CROSS_DIR),"/")
+SDK_DIR		:= $(patsubst %/,%,$(CROSS_DIR))
+else
+SDK_DIR		:= $(CROSS_DIR)
+endif
 
-PAC_DIR		= /lincon
+#
+# Cross-compiling for LinPac SDK
+#
+ifneq ($(filter lincon%, $(CROSS)),)
 
-EXIST ?= $(shell test -d "$(PAC_DIR)"; echo $$?)
+ifeq ($(SDK_DIR),)
+SDK_DIR		:= ~/$(CROSS)
+endif
+
+EXIST ?= $(shell test -d "$(SDK_DIR)"; echo $$?)
 ifeq ($(EXIST),1)
-$(error You must have PAC_DIR=$(PAC_DIR))
+$(error You must have 'lincon' SDK directory: $(SDK_DIR))
 endif
 
 CC_PREFIX	= arm-linux-
-PAC_TOOLS_DIR	= $(PAC_DIR)/tools
+SDK_TOOLS_DIR	= $(SDK_DIR)/tools
 
-PATH		:= $(PAC_TOOLS_DIR)/bin:$(PAC_TOOLS_DIR)/sbin:$(PATH)
-INCPATH		= $(PAC_TOOLS_DIR)/include
-LIBPATH		= $(PAC_TOOLS_DIR)/lib
-INCI8K		= $(PAC_DIR)/i8k/include
-LIBI8K		= $(PAC_DIR)/i8k/lib
+PATH		:= $(SDK_TOOLS_DIR)/bin:$(SDK_TOOLS_DIR)/sbin:$(PATH)
+INCPATH		= $(SDK_TOOLS_DIR)/include
+LIBPATH		= $(SDK_TOOLS_DIR)/lib
+INCI8K		= $(SDK_DIR)/i8k/include
+LIBI8K		= $(SDK_DIR)/i8k/lib
 INCLUDE		+= -I$(INCPATH) -I$(INCI8K)
 CFLAGS		+= -DCONFIG_LINPAC_TARGET
 LDFLAGS		+= -L$(LIBI8K)
 LDLIBS		= -li8k
+else
+ifneq ($(CROSS),)
+$(error Not supported cross-compilation: $(CROSS))
+endif
 endif
 
 CROSS		?= $(shell uname -i)
