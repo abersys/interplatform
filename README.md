@@ -9,8 +9,8 @@ The tool for making log files on external block devices.
 Most embedded systems require to record the data of the running applications.
 You can connect them to this tool to make sure data is stored on a single or
 multiple devices. It can be linked through a pipe, e.g. here it is writing
-random data to scsi device, which major number is 8 and minor number greater
-then 2:
+random data to scsi device, which major number is 8 and minor number is
+equal or greater than 2:
 
 ```sh
 $ cat /dev/urandom | ./ilogger -d 8,2 -m /mnt
