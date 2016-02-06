@@ -15,8 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EXTENS_H__
-#define __EXTENS_H__
+#ifndef EXTENS_H
+#define EXTENS_H
 
 #include <stdint.h>
 
@@ -79,4 +79,4 @@ struct extens_thread_t {
 	pthread_mutex_t emutex;
 };
 
-#endif /* __EXTENS_H__ */
+#endif /* EXTENS_H */

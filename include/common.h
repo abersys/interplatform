@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __COMMON_H__
-#define __COMMON_H__
+#ifndef COMMON_H
+#define COMMON_H
 
 #include <stdint.h>
 
@@ -62,4 +62,4 @@ do {								\
 			x = b;		\
 	} while (0)
 
-#endif /* __COMMON_H__ */
+#endif /* COMMON_H */
