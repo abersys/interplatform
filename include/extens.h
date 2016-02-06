@@ -71,6 +71,10 @@ struct extens_thread_t {
 	uint32_t count_in,
 		 count_out;
 
+	/* parameters IDs that are defined in cfg file */
+	int *id_in,
+	    *id_out;
+
 	/* threads local copy of parameters */
 	union params_u_t *in;
 	union params_u_t *out;
