@@ -18,6 +18,7 @@
 #ifndef EXTENS_H
 #define EXTENS_H
 
+#include <pthread.h>
 #include <stdint.h>
 
 union params_u_t {
@@ -27,10 +28,11 @@ union params_u_t {
 };
 
 enum extens_type {
-	EXTENS_V0 = 0,
+	EXTENS_INCR_V0 = 0,
+	EXTENS_THRD_V0 = 1,
 };
 
-struct extens_t {
+struct extens_common_t {
 	uint32_t type;
 
 	void *lib_handle;
@@ -41,12 +43,21 @@ struct extens_t {
 	void (*init)(void *);
 	void *(*run)(void *);
 
-	/* flags */
-	uint32_t enable:1;
-	uint32_t :31;
+	union {
+		uint32_t flags;
+		uint32_t enable:1;
+		uint32_t :31;
+	};
 
-	uint32_t count_in,
-		 count_out;
+	int32_t count_in,
+		count_out;
+
+	void *opt;
+};
+
+struct extens_incore_t {
+
+	struct extens_common_t cmn;
 
 	/* direct access to internal core parameters */
 	union params_u_t **in;
@@ -54,33 +65,25 @@ struct extens_t {
 };
 
 struct extens_thread_t {
-	uint32_t type;
 
-	void *lib_handle;
-
-	char *section;
-	char *name;
-
-	void (*init)(void *);
-	void *(*run)(void *);
-
-	/* flags */
-	uint32_t enable:1;
-	uint32_t :31;
-
-	uint32_t count_in,
-		 count_out;
+	struct extens_common_t cmn;
 
 	/* parameters IDs that are defined in cfg file */
 	int *id_in,
 	    *id_out;
 
-	/* threads local copy of parameters */
+	/* threads local parameters copy */
 	union params_u_t *in;
 	union params_u_t *out;
 
 	/* used to sync local parameters with core */
 	pthread_mutex_t emutex;
+};
+
+union extens_t {
+	struct extens_common_t cmn;
+	struct extens_incore_t incr;
+	struct extens_thread_t thrd;
 };
 
 #endif /* EXTENS_H */
