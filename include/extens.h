@@ -21,6 +21,9 @@
 #include <pthread.h>
 #include <stdint.h>
 
+#define EXTEN_OK	(NULL)
+#define EXTEN_FAILED	((void *) -1)
+
 union params_u_t {
 	float f;
 	int32_t i;
@@ -40,14 +43,15 @@ struct extens_common_t {
 	char *section;
 	char *name;
 
-	void (*init)(void *);
+	void *(*init)(void *);
 	void *(*run)(void *);
+	void (*cleanup)(void *);
 
 	union {
-		uint32_t flags;
+		uint32_t data;
 		uint32_t enable:1;
 		uint32_t :31;
-	};
+	} flag;
 
 	int32_t count_in,
 		count_out;
