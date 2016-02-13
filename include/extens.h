@@ -21,8 +21,8 @@
 #include <pthread.h>
 #include <stdint.h>
 
-#define EXTEN_OK	(NULL)
-#define EXTEN_FAILED	((void *) -1)
+#define EXTEN_OK	((void *) 0)
+#define EXTEN_FAILED	((void *)-1)
 
 union params_u_t {
 	float f;
@@ -35,7 +35,37 @@ enum extens_type {
 	EXTENS_THRD_V0 = 1,
 };
 
-struct extens_common_t {
+/* In-process extenstion:
+ * It is running with the main process. Performs faster because doesn't
+ * require any syncronization code. Usually it is used for math algorithms
+ * that don't require any blocked i/o operations. But it can still be used
+ * with async i/o.
+ */
+struct extens_inproc_t {
+	/* direct access to internal core parameters */
+	union params_u_t **in;
+	union params_u_t **out;
+};
+
+/* Thread extenstion:
+ * This type runs as a separate thread and don't impose any special
+ * requirements.
+ */
+struct extens_thread_t {
+
+	/* parameters IDs that are defined in cfg file */
+	int *id_in,
+	    *id_out;
+
+	/* threads local parameters copy */
+	union params_u_t *in;
+	union params_u_t *out;
+
+	/* used to sync local parameters with core */
+	pthread_mutex_t emutex;
+};
+
+struct extens_t {
 	uint32_t type;
 
 	void *lib_handle;
@@ -50,44 +80,18 @@ struct extens_common_t {
 	union {
 		uint32_t data;
 		uint32_t enable:1;
-		uint32_t :31;
 	} flag;
 
 	int32_t count_in,
 		count_out;
 
+	/* pointer to any optional structures */
 	void *opt;
-};
 
-struct extens_incore_t {
-
-	struct extens_common_t cmn;
-
-	/* direct access to internal core parameters */
-	union params_u_t **in;
-	union params_u_t **out;
-};
-
-struct extens_thread_t {
-
-	struct extens_common_t cmn;
-
-	/* parameters IDs that are defined in cfg file */
-	int *id_in,
-	    *id_out;
-
-	/* threads local parameters copy */
-	union params_u_t *in;
-	union params_u_t *out;
-
-	/* used to sync local parameters with core */
-	pthread_mutex_t emutex;
-};
-
-union extens_t {
-	struct extens_common_t cmn;
-	struct extens_incore_t incr;
-	struct extens_thread_t thrd;
+	union {
+		struct extens_inproc_t *inp;
+		struct extens_thread_t *thr;
+	} spec;
 };
 
 #endif /* EXTENS_H */
