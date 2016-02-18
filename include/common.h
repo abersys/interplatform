@@ -35,26 +35,26 @@
 #define TERN	4
 
 #define prl(type, fmt, ...) \
-do {								\
-	switch (type) {						\
-	case TINF:						\
-		printf(PID ":  INFO: " fmt, ##__VA_ARGS__);	\
-		printf("\n");					\
-	break;							\
-	case TDBG:						\
-		printf(PID ": DEBUG: " fmt, ##__VA_ARGS__);	\
-		printf("\n");					\
-	break;							\
-	case TERR:						\
-		printf(PID ": ERROR: " fmt, ##__VA_ARGS__);	\
-		printf("\n");					\
-		fflush(stdout);					\
-	break;							\
-	case TERN:						\
-		printf(PID ": ERROR: " fmt, ##__VA_ARGS__);	\
-		printf(", error: %s\n", strerror(errno));	\
-		fflush(stdout);					\
-	}							\
+do {									\
+	switch (type) {							\
+	case TINF:							\
+		printf("%-12s INFO  : " fmt, PID, ##__VA_ARGS__);	\
+		printf("\n");						\
+	break;								\
+	case TDBG:							\
+		printf("%-12s DEBUG : " fmt, PID, ##__VA_ARGS__);	\
+		printf("\n");						\
+	break;								\
+	case TERR:							\
+		printf("%-12s ERROR : " fmt, PID, ##__VA_ARGS__);	\
+		printf("\n");						\
+		fflush(stdout);						\
+	break;								\
+	case TERN:							\
+		printf("%-12s ERROR : " fmt, PID, ##__VA_ARGS__);	\
+		printf(", error: %s\n", strerror(errno));		\
+		fflush(stdout);						\
+	}								\
 } while (0)
 
 #define LIMIT_VAR_RANGE(x, a, b)	\
