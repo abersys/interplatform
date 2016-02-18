@@ -77,10 +77,7 @@ struct extens_t {
 	void *(*run)(void *);
 	void (*cleanup)(void *);
 
-	union {
-		uint32_t data;
-		uint32_t enable:1;
-	} flag;
+	uint32_t enable:1;
 
 	int32_t count_in,
 		count_out;
