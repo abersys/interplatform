@@ -24,15 +24,25 @@
 #define EXTEN_OK	((void *) 0)
 #define EXTEN_FAILED	((void *)-1)
 
-union params_u_t {
-	float f;
-	int32_t i;
-	uint32_t ui;
+#define PR_TYPE_FLOAT		0
+#define PR_TYPE_INT		1
+#define PR_TYPE_UINT		2
+
+struct param_t {
+	union {
+		float f;
+		int32_t i;
+		uint32_t ui;
+	} val;
+
+	uint32_t type:2;
+	uint32_t write_cfg:1;
+	uint32_t :29;
 };
 
 enum extens_type {
-	EXTENS_INCR_V0 = 0,
-	EXTENS_THRD_V0 = 1,
+	EXTENS_INP_V0 = 0,
+	EXTENS_THR_V0 = 1,
 };
 
 /* In-process extenstion:
@@ -43,8 +53,8 @@ enum extens_type {
  */
 struct extens_inproc_t {
 	/* direct access to internal core parameters */
-	union params_u_t **in;
-	union params_u_t **out;
+	struct param_t **in;
+	struct param_t **out;
 };
 
 /* Thread extenstion:
@@ -58,8 +68,8 @@ struct extens_thread_t {
 	    *id_out;
 
 	/* threads local parameters copy */
-	union params_u_t *in;
-	union params_u_t *out;
+	struct param_t *in;
+	struct param_t *out;
 
 	/* used to sync local parameters with core */
 	pthread_mutex_t emutex;
